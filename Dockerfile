@@ -39,25 +39,9 @@ RUN mkdir -p storage/framework/sessions \
     bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Create startup script
-# IMPORTANT: config:cache and route:cache run at STARTUP (not build time)
-# because Railway env vars are only available at runtime
-RUN echo '#!/bin/bash\n\
-    set -e\n\
-    echo "Running migrations..."\n\
-    php artisan migrate --force\n\
-    echo "Creating storage link..."\n\
-    php artisan storage:link 2>/dev/null || true\n\
-    echo "Caching config..."\n\
-    php artisan config:cache\n\
-    echo "Caching routes..."\n\
-    php artisan route:cache\n\
-    echo "Caching views..."\n\
-    php artisan view:cache\n\
-    echo "Starting server on port ${PORT:-8080}..."\n\
-    php -S 0.0.0.0:${PORT:-8080} -t public\n\
-    ' > /app/start.sh && chmod +x /app/start.sh
+# Make startup script executable
+RUN chmod +x docker/start.sh
 
 EXPOSE ${PORT:-8080}
 
-CMD ["/bin/bash", "/app/start.sh"]
+CMD ["bash", "docker/start.sh"]
