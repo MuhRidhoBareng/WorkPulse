@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pamong;
 
 use App\Http\Controllers\Controller;
+use App\Models\Activity;
 use App\Models\ActivityReport;
 use App\Models\Attendance;
 
@@ -36,6 +37,13 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Daftar kegiatan aktif dari TU
+        $activities = Activity::active()
+            ->currentMonth()
+            ->orderBy('date')
+            ->take(10)
+            ->get();
+
         return view('pamong.dashboard', compact(
             'attendanceThisMonth',
             'todayAttendance',
@@ -43,7 +51,8 @@ class DashboardController extends Controller
             'pendingReports',
             'approvedReports',
             'rejectedReports',
-            'recentRejected'
+            'recentRejected',
+            'activities'
         ));
     }
 }

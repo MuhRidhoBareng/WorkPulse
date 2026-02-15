@@ -5,8 +5,10 @@ use App\Http\Controllers\Pamong\DashboardController as PamongDashboardController
 use App\Http\Controllers\Pamong\AttendanceController;
 use App\Http\Controllers\Pamong\ActivityReportController;
 use App\Http\Controllers\Kepala\DashboardController as KepalaDashboardController;
-use App\Http\Controllers\Kepala\RekapController;
-use App\Http\Controllers\Kepala\PerformanceReviewController;
+use App\Http\Controllers\Kepala\LaporanController;
+use App\Http\Controllers\Kepala\RekapController as KepalaRekapController;
+use App\Http\Controllers\Tu\RekapController as TuRekapController;
+use App\Http\Controllers\Tu\PerformanceReviewController as TuPerformanceReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,19 +49,31 @@ Route::middleware(['auth', 'active', 'role:pamong'])->prefix('pamong')->name('pa
 });
 
 // ============================================
-// KEPALA SKB ROUTES
+// KEPALA SKB ROUTES (read-only / monitoring)
 // ============================================
 Route::middleware(['auth', 'active', 'role:kepala_skb'])->prefix('kepala')->name('kepala.')->group(function () {
     Route::get('/dashboard', [KepalaDashboardController::class, 'index'])->name('dashboard');
 
-    // Rekap
-    Route::get('/rekap', [RekapController::class, 'index'])->name('rekap.index');
-    Route::get('/rekap/export', [RekapController::class, 'exportExcel'])->name('rekap.export');
+    // Laporan ACC (read-only - approved reports only)
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 
-    // Evaluasi
-    Route::get('/evaluasi', [PerformanceReviewController::class, 'index'])->name('evaluasi.index');
-    Route::get('/evaluasi/create', [PerformanceReviewController::class, 'create'])->name('evaluasi.create');
-    Route::post('/evaluasi', [PerformanceReviewController::class, 'store'])->name('evaluasi.store');
+    // Rekap Kinerja (read-only)
+    Route::get('/rekap', [KepalaRekapController::class, 'index'])->name('rekap.index');
+    Route::get('/rekap/export', [KepalaRekapController::class, 'exportExcel'])->name('rekap.export');
+});
+
+// ============================================
+// TU WEB ROUTES (rekap & evaluasi management)
+// ============================================
+Route::middleware(['auth', 'active', 'role:tu'])->prefix('tu')->name('tu.')->group(function () {
+    // Rekap Kinerja (TU manages this now)
+    Route::get('/rekap', [TuRekapController::class, 'index'])->name('rekap.index');
+    Route::get('/rekap/export', [TuRekapController::class, 'exportExcel'])->name('rekap.export');
+
+    // Evaluasi Kinerja (TU manages this now)
+    Route::get('/evaluasi', [TuPerformanceReviewController::class, 'index'])->name('evaluasi.index');
+    Route::get('/evaluasi/create', [TuPerformanceReviewController::class, 'create'])->name('evaluasi.create');
+    Route::post('/evaluasi', [TuPerformanceReviewController::class, 'store'])->name('evaluasi.store');
 });
 
 // ============================================

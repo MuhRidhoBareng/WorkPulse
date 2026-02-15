@@ -6,10 +6,13 @@ use App\Filament\Resources\ActivityReportResource\Pages;
 use App\Models\ActivityReport;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 
 class ActivityReportResource extends Resource
 {
@@ -25,16 +28,83 @@ class ActivityReportResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make('Informasi Laporan')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('user.name')
+                            ->label('Dilaporkan oleh'),
+                        Infolists\Components\TextEntry::make('title')
+                            ->label('Judul'),
+                        Infolists\Components\TextEntry::make('description')
+                            ->label('Deskripsi')
+                            ->columnSpanFull(),
+                        Infolists\Components\TextEntry::make('activity_date')
+                            ->label('Tanggal Kegiatan')
+                            ->date('d/m/Y'),
+                        Infolists\Components\TextEntry::make('status')
+                            ->label('Status')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'pending' => 'warning',
+                                'approved' => 'success',
+                                'rejected' => 'danger',
+                                default => 'gray',
+                            })
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                                'pending' => 'Menunggu Verifikasi',
+                                'approved' => 'Disetujui',
+                                'rejected' => 'Ditolak',
+                                default => $state,
+                            }),
+                    ])->columns(2),
+
+                Infolists\Components\Section::make('Dokumen Bukti')
+                    ->schema([
+                        Infolists\Components\ImageEntry::make('document_path')
+                            ->label('')
+                            ->disk('public')
+                            ->height(400)
+                            ->extraImgAttributes(['class' => 'rounded-lg', 'style' => 'max-width: 100%; height: auto;'])
+                            ->placeholder('Tidak ada dokumen yang diunggah.')
+                            ->visible(function ($record) {
+                                if (!$record?->document_path) return false;
+                                $ext = strtolower(pathinfo($record->document_path, PATHINFO_EXTENSION));
+                                return in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif']);
+                            }),
+                        Infolists\Components\TextEntry::make('document_link')
+                            ->label('Dokumen PDF')
+                            ->state(fn ($record) => $record?->document_path ? asset('storage/' . $record->document_path) : null)
+                            ->url(fn ($record) => $record?->document_path ? asset('storage/' . $record->document_path) : null)
+                            ->openUrlInNewTab()
+                            ->visible(function ($record) {
+                                if (!$record?->document_path) return false;
+                                $ext = strtolower(pathinfo($record->document_path, PATHINFO_EXTENSION));
+                                return $ext === 'pdf';
+                            }),
+                    ]),
+
+                Infolists\Components\Section::make('Alasan Penolakan')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('rejection_reason')
+                            ->label('')
+                            ->columnSpanFull(),
+                    ])
+                    ->visible(fn ($record) => $record?->status === 'rejected'),
+            ]);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Laporan')
                     ->schema([
-                        Forms\Components\TextInput::make('user.name')
+                        Forms\Components\Placeholder::make('pamong_name')
                             ->label('Dilaporkan oleh')
-                            ->disabled()
-                            ->formatStateUsing(fn ($record) => $record?->user?->name ?? '-'),
+                            ->content(fn ($record) => $record?->user?->name ?? '-'),
                         Forms\Components\TextInput::make('title')
                             ->label('Judul')
                             ->disabled(),
@@ -64,7 +134,7 @@ class ActivityReportResource extends Resource
                                 if (in_array($extension, ['jpg', 'jpeg', 'png', 'webp'])) {
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="space-y-2">
-                                            <img src="' . $url . '" alt="Bukti Kegiatan" class="max-w-full rounded-lg border border-gray-200" style="max-height: 500px;">
+                                            <img src="' . $url . '" alt="Bukti Kegiatan" class="max-w-full rounded-lg border border-gray-200" style="max-height: 400px;">
                                             <a href="' . $url . '" target="_blank" class="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-800 underline">
                                                 Buka gambar di tab baru ↗
                                             </a>
@@ -187,6 +257,7 @@ class ActivityReportResource extends Resource
     {
         return [
             'index' => Pages\ListActivityReports::route('/'),
+            'view' => Pages\ViewActivityReport::route('/{record}'),
         ];
     }
 }

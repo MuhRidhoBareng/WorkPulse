@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Kepala;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityReport;
 use App\Models\Attendance;
-use App\Models\PerformanceReview;
 use App\Models\User;
 
 class DashboardController extends Controller
@@ -27,17 +26,11 @@ class DashboardController extends Controller
             ->whereYear('verified_at', now()->year)
             ->count();
 
-        // Total evaluasi bulan ini
-        $reviewsThisMonth = PerformanceReview::whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->count();
-
         return view('kepala.dashboard', compact(
             'totalPamong',
             'todayAttendance',
             'pendingReports',
-            'approvedThisMonth',
-            'reviewsThisMonth'
+            'approvedThisMonth'
         ));
     }
 }

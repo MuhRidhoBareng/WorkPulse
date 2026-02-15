@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -26,12 +25,20 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
-            ->brandName('WorkPulse — SKB Dinas Pendidikan')
-            ->brandLogo(asset('images/logo-kemendikdasmen.jpg'))
-            ->brandLogoHeight('3rem')
+            ->brandName('SPNF SKB Kota Kotamobagu')
+            ->brandLogo(new \Illuminate\Support\HtmlString(
+                '<div class="flex items-center gap-3">' .
+                    '<img src="' . asset('images/logo-kemendikdasmen.jpg') . '" class="h-10 w-auto rounded-md shrink-0" alt="Kemendikdasmen">' .
+                    '<img src="' . asset('images/logo-kotamobagu.png') . '" class="h-10 w-auto shrink-0" alt="Kotamobagu">' .
+                    '<div class="flex flex-col">' .
+                        '<span class="text-sm font-bold text-white leading-tight">SPNF SKB</span>' .
+                        '<span class="text-[10px] text-gray-400 leading-tight">Kota Kotamobagu</span>' .
+                    '</div>' .
+                '</div>'
+            ))
+            ->brandLogoHeight('3.5rem')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
                 'gray' => Color::Slate,
                 'info' => Color::Blue,
                 'success' => Color::Emerald,
@@ -57,6 +64,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 \App\Filament\Widgets\StatsOverview::class,
+                \App\Filament\Widgets\ApprovedReportsSlideshow::class,
                 \App\Filament\Widgets\AttendanceChart::class,
                 \App\Filament\Widgets\ActivityReportChart::class,
                 \App\Filament\Widgets\PamongPerformanceChart::class,
@@ -73,7 +81,7 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
-                Authenticate::class,
+                \App\Http\Middleware\FilamentRedirectToLogin::class,
             ]);
     }
 }
