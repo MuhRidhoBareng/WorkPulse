@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Detail Laporan</h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight animate-slide-in-left">Detail Laporan</h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 animate-fade-in-up anim-delay-1">
                 <div class="mb-6">
                     <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-{{ $report->status_color }}-100 text-{{ $report->status_color }}-800">
                         {{ $report->status_label }}

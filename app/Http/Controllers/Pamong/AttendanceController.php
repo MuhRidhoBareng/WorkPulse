@@ -38,8 +38,8 @@ class AttendanceController extends Controller
         }
 
         $request->validate([
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ], [
             'photo.required' => 'Foto selfie wajib diunggah saat clock in.',
@@ -80,8 +80,8 @@ class AttendanceController extends Controller
         }
 
         $request->validate([
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ], [
             'photo.required' => 'Foto selfie wajib diunggah saat clock out.',

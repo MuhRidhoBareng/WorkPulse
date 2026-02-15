@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Kehadiran</h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight animate-slide-in-left">Kehadiran</h2>
     </x-slot>
 
     <div class="py-12">
@@ -18,7 +18,7 @@
             @endif
 
             {{-- Clock In / Clock Out Card --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8 animate-fade-in-up anim-delay-1">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ now()->translatedFormat('l, d F Y') }}</h3>
 
                 @if(!$todayAttendance)
@@ -46,7 +46,7 @@
                             @enderror
                         </div>
 
-                        <button type="submit" onclick="getLocation('in')" class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition">
+                        <button type="button" onclick="submitWithLocation('in')" class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition btn-pulse">
                             <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                             </svg>
@@ -88,7 +88,7 @@
                                 @enderror
                             </div>
 
-                            <button type="submit" onclick="getLocation('out')" class="inline-flex items-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">
+                            <button type="button" onclick="submitWithLocation('out')" class="inline-flex items-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition btn-pulse">
                                 <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
                                 </svg>
@@ -124,7 +124,7 @@
             </div>
 
             {{-- Riwayat Kehadiran Bulan Ini --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 animate-fade-in-up anim-delay-3">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Riwayat Kehadiran — {{ now()->translatedFormat('F Y') }}</h3>
 
                 @if($attendances->count() > 0)
@@ -195,45 +195,32 @@
             }
         }
 
-        function getLocation(type) {
+        function submitWithLocation(type) {
+            event.preventDefault();
+            const form = type === 'in' ? document.getElementById('clockInForm') : document.getElementById('clockOutForm');
+            const latField = document.getElementById('lat_' + type);
+            const lngField = document.getElementById('lng_' + type);
+
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    if (type === 'in') {
-                        document.getElementById('lat_in').value = position.coords.latitude;
-                        document.getElementById('lng_in').value = position.coords.longitude;
-                    } else {
-                        document.getElementById('lat_out').value = position.coords.latitude;
-                        document.getElementById('lng_out').value = position.coords.longitude;
-                    }
-                }, function(error) {
-                    if (type === 'in') {
-                        document.getElementById('lat_in').value = 0;
-                        document.getElementById('lng_in').value = 0;
-                    } else {
-                        document.getElementById('lat_out').value = 0;
-                        document.getElementById('lng_out').value = 0;
-                    }
-                });
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        latField.value = position.coords.latitude;
+                        lngField.value = position.coords.longitude;
+                        form.submit();
+                    },
+                    function(error) {
+                        // GPS ditolak atau tidak tersedia — tetap bisa clock in/out
+                        console.log('GPS tidak tersedia:', error.message);
+                        latField.value = '';
+                        lngField.value = '';
+                        form.submit();
+                    },
+                    { timeout: 5000, enableHighAccuracy: true }
+                );
             } else {
-                alert('Browser Anda tidak mendukung geolokasi.');
+                // Browser tidak support geolocation
+                form.submit();
             }
         }
-
-        // Pre-fetch location on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const latIn = document.getElementById('lat_in');
-                    const lngIn = document.getElementById('lng_in');
-                    const latOut = document.getElementById('lat_out');
-                    const lngOut = document.getElementById('lng_out');
-
-                    if (latIn) latIn.value = position.coords.latitude;
-                    if (lngIn) lngIn.value = position.coords.longitude;
-                    if (latOut) latOut.value = position.coords.latitude;
-                    if (lngOut) lngOut.value = position.coords.longitude;
-                });
-            }
-        });
     </script>
 </x-app-layout>

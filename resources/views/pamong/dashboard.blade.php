@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight animate-slide-in-left">
             Dashboard Pamong
         </h2>
     </x-slot>
@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             {{-- Flash Messages --}}
             @if(session('success'))
-                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded animate-fade-in">
                     {{ session('success') }}
                 </div>
             @endif
@@ -17,7 +17,7 @@
             {{-- Statistik Cards --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {{-- Kehadiran Bulan Ini --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 card-hover animate-fade-in-up anim-delay-1 border-l-4 border-blue-500">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
                             <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -32,7 +32,7 @@
                 </div>
 
                 {{-- Total Laporan --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 card-hover animate-fade-in-up anim-delay-2 border-l-4 border-indigo-500">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 bg-indigo-500 rounded-md p-3">
                             <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -47,7 +47,7 @@
                 </div>
 
                 {{-- Menunggu Verifikasi --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 card-hover animate-fade-in-up anim-delay-3 border-l-4 border-yellow-500">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
                             <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -62,7 +62,7 @@
                 </div>
 
                 {{-- Disetujui --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 card-hover animate-fade-in-up anim-delay-4 border-l-4 border-green-500">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
                             <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -78,7 +78,7 @@
             </div>
 
             {{-- Status Kehadiran Hari Ini --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8 animate-fade-in-up anim-delay-5">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Kehadiran Hari Ini — {{ now()->translatedFormat('l, d F Y') }}</h3>
 
                 @if($todayAttendance)
@@ -98,7 +98,7 @@
                     </div>
                 @else
                     <p class="text-gray-500">Anda belum melakukan clock in hari ini.</p>
-                    <a href="{{ route('pamong.attendance.index') }}" class="mt-2 inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm">
+                    <a href="{{ route('pamong.attendance.index') }}" class="mt-2 inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm btn-pulse">
                         Clock In Sekarang →
                     </a>
                 @endif
@@ -106,13 +106,13 @@
 
             {{-- Laporan Ditolak Terakhir --}}
             @if($recentRejected->count() > 0)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 animate-fade-in-up anim-delay-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">
                         <span class="text-red-600">⚠</span> Laporan Ditolak
                     </h3>
                     <div class="space-y-3">
                         @foreach($recentRejected as $report)
-                            <div class="border-l-4 border-red-400 bg-red-50 p-4 rounded-r-lg">
+                            <div class="border-l-4 border-red-400 bg-red-50 p-4 rounded-r-lg card-hover">
                                 <p class="font-medium text-gray-800">{{ $report->title }}</p>
                                 <p class="text-sm text-red-600 mt-1"><strong>Alasan:</strong> {{ $report->rejection_reason }}</p>
                                 <p class="text-xs text-gray-500 mt-1">Ditolak oleh {{ $report->verifier?->name }} pada {{ $report->verified_at?->format('d/m/Y H:i') }}</p>

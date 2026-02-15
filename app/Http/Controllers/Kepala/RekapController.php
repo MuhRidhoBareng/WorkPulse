@@ -89,8 +89,8 @@ class RekapController extends Controller
         $headers = ['No', 'Nama Pamong', 'NIP', 'Total Kehadiran', 'Target Kehadiran', '% Kehadiran', 'Kegiatan Disetujui', 'Target Kegiatan', '% Kegiatan'];
         $row = 4;
         foreach ($headers as $col => $header) {
-            $cell = $sheet1->getCellByColumnAndRow($col + 1, $row);
-            $cell->setValue($header);
+            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + 1);
+            $sheet1->setCellValue("{$colLetter}{$row}", $header);
         }
         $this->applyHeaderStyle($sheet1, "A{$row}:I{$row}");
 
@@ -174,7 +174,8 @@ class RekapController extends Controller
         $attHeaders = ['No', 'Nama Pamong', 'NIP', 'Tanggal', 'Clock In', 'Clock Out', 'Status', 'Foto Clock In', 'Foto Clock Out'];
         $row = 3;
         foreach ($attHeaders as $col => $header) {
-            $sheet2->getCellByColumnAndRow($col + 1, $row)->setValue($header);
+            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + 1);
+            $sheet2->setCellValue("{$colLetter}{$row}", $header);
         }
         $this->applyHeaderStyle($sheet2, "A{$row}:I{$row}");
 
@@ -257,7 +258,8 @@ class RekapController extends Controller
         $rptHeaders = ['No', 'Nama Pamong', 'NIP', 'Tanggal Kegiatan', 'Judul Kegiatan', 'Deskripsi', 'Status', 'Diverifikasi Oleh', 'Waktu Verifikasi', 'Dokumen/Foto Bukti'];
         $row = 3;
         foreach ($rptHeaders as $col => $header) {
-            $sheet3->getCellByColumnAndRow($col + 1, $row)->setValue($header);
+            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + 1);
+            $sheet3->setCellValue("{$colLetter}{$row}", $header);
         }
         $this->applyHeaderStyle($sheet3, "A{$row}:J{$row}");
 

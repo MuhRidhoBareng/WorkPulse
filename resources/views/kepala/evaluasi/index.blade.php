@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Riwayat Evaluasi</h2>
-            <a href="{{ route('kepala.evaluasi.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight animate-slide-in-left">Riwayat Evaluasi</h2>
+            <a href="{{ route('kepala.evaluasi.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium btn-pulse">
                 + Beri Evaluasi
             </a>
         </div>
@@ -16,7 +16,7 @@
                 </div>
             @endif
 
-            <div class="bg-white shadow-sm sm:rounded-lg">
+            <div class="bg-white shadow-sm sm:rounded-lg animate-fade-in-up anim-delay-1">
                 @if($reviews->count() > 0)
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">

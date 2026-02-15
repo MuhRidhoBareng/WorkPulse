@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Rekap Kinerja Pamong</h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight animate-slide-in-left">Rekap Kinerja Pamong</h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             {{-- Filter & Export --}}
-            <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-8">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-8 animate-fade-in-up anim-delay-1">
                 <form method="GET" action="{{ route('kepala.rekap.index') }}" class="flex flex-wrap items-end gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Bulan</label>
@@ -26,7 +26,7 @@
                             @endfor
                         </select>
                     </div>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium">
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium btn-pulse">
                         Tampilkan
                     </button>
 
@@ -42,7 +42,7 @@
             </div>
 
             {{-- Tabel Rekap --}}
-            <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden">
+            <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden animate-fade-in-up anim-delay-2">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">

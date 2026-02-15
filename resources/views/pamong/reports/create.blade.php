@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Buat Laporan Kegiatan</h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight animate-slide-in-left">Buat Laporan Kegiatan</h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 animate-fade-in-up anim-delay-1">
                 <form method="POST" action="{{ route('pamong.reports.store') }}" enctype="multipart/form-data">
                     @csrf
 

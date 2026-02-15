@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Beri Evaluasi Kinerja</h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight animate-slide-in-left">Beri Evaluasi Kinerja</h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 animate-fade-in-up anim-delay-1">
                 <form method="POST" action="{{ route('kepala.evaluasi.store') }}">
                     @csrf
 
@@ -64,7 +64,7 @@
                         <a href="{{ route('kepala.evaluasi.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm">
                             Batal
                         </a>
-                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium">
+                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium btn-pulse">
                             Simpan Evaluasi
                         </button>
                     </div>
