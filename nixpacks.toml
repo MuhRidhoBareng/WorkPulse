@@ -1,0 +1,25 @@
+[build]
+# Install Node.js for Vite asset building
+NIXPACKS_PKGS = "nodejs_20"
+
+[phases.setup]
+nixPkgs = ["...", "nodejs_20", "php83", "php83Extensions.pdo", "php83Extensions.pdo_mysql", "php83Extensions.mbstring", "php83Extensions.xml", "php83Extensions.curl", "php83Extensions.zip", "php83Extensions.gd", "php83Extensions.fileinfo", "php83Extensions.tokenizer", "php83Extensions.bcmath", "php83Extensions.intl"]
+
+[phases.install]
+cmds = [
+    "mkdir -p /etc/caddy",
+    "composer install --no-dev --optimize-autoloader --no-interaction",
+    "npm ci",
+    "npm run build",
+]
+
+[phases.build]
+cmds = [
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache",
+    "php artisan filament:optimize",
+]
+
+[start]
+cmd = "php artisan migrate --force && php artisan storage:link && php -S 0.0.0.0:${PORT:-8080} -t public"
