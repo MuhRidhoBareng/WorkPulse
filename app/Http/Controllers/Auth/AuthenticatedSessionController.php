@@ -28,7 +28,18 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Clear any "intended" URL from previous sessions to prevent cross-role redirect
+        $request->session()->forget('url.intended');
+
+        // Redirect based on user role
+        $user = $request->user();
+
+        return match ($user->role) {
+            'pamong' => redirect()->route('pamong.dashboard'),
+            'tu' => redirect('/admin'),
+            'kepala_skb' => redirect()->route('kepala.dashboard'),
+            default => redirect()->route('dashboard'),
+        };
     }
 
     /**

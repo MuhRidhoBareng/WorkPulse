@@ -27,12 +27,12 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName('SPNF SKB Kota Kotamobagu')
             ->brandLogo(new \Illuminate\Support\HtmlString(
-                '<div class="flex items-center gap-3">' .
-                    '<img src="' . asset('images/logo-kemendikdasmen.jpg') . '" class="h-10 w-auto rounded-md shrink-0" alt="Kemendikdasmen">' .
-                    '<img src="' . asset('images/logo-kotamobagu.png') . '" class="h-10 w-auto shrink-0" alt="Kotamobagu">' .
-                    '<div class="flex flex-col">' .
-                        '<span class="text-sm font-bold text-white leading-tight">SPNF SKB</span>' .
-                        '<span class="text-[10px] text-gray-400 leading-tight">Kota Kotamobagu</span>' .
+                '<div style="display:flex;align-items:center;gap:0.625rem;">' .
+                    '<img src="' . asset('images/logo-kemendikdasmen.jpg') . '" style="height:2.25rem;width:auto;border-radius:0.375rem;flex-shrink:0;" alt="Kemendikdasmen">' .
+                    '<img src="' . asset('images/logo-kotamobagu.png') . '" style="height:2.25rem;width:auto;flex-shrink:0;" alt="Kotamobagu">' .
+                    '<div style="display:flex;flex-direction:column;">' .
+                        '<span style="font-size:0.875rem;font-weight:700;color:#1e293b;line-height:1.2;">SPNF SKB</span>' .
+                        '<span style="font-size:0.625rem;color:#94a3b8;line-height:1.2;">Kota Kotamobagu</span>' .
                     '</div>' .
                 '</div>'
             ))

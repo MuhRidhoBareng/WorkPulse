@@ -1,8 +1,8 @@
 <x-filament-widgets::widget>
     <x-filament::section>
         <x-slot name="heading">
-            <div class="flex items-center gap-2">
-                <x-heroicon-o-photo class="w-5 h-5 text-primary-500" />
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <x-heroicon-o-photo style="width: 1.25rem; height: 1.25rem; color: #3b82f6;" />
                 <span>Slideshow Laporan Disetujui</span>
             </div>
         </x-slot>
@@ -21,84 +21,106 @@
                     jump(i) { this.active = i; this.stop(); this.start(); }
                 }"
                 @mouseenter="stop()" @mouseleave="start()"
-                class="relative w-full"
+                style="position: relative; width: 100%;"
             >
-                {{-- Container with explicitly defined min-height for responsiveness --}}
-                <div class="relative w-full overflow-hidden rounded-xl bg-slate-50 border border-slate-200" style="min-height: 450px;">
+                {{-- Slides container --}}
+                <div style="position: relative; width: 100%; border-radius: 0.75rem; border: 1px solid #e2e8f0; overflow: hidden; background: #f8fafc;">
+
+                    {{-- Invisible spacer: first slide rendered normally to define height --}}
+                    <div style="visibility: hidden;" aria-hidden="true">
+                        <div style="width: 100%; background: #f1f5f9; text-align: center; padding: 0.75rem;">
+                            <img src="{{ $reports->first()['photo_url'] }}" style="max-width: 100%; max-height: 340px; object-fit: contain; display: block; margin: 0 auto;" alt="">
+                        </div>
+                        <div style="padding: 0.875rem 1.25rem; text-align: center; background: white;">
+                            <h3 style="font-size: 1rem; font-weight: 700; margin: 0 0 0.2rem 0;">{{ $reports->first()['title'] }}</h3>
+                            <p style="font-size: 0.8rem; margin: 0 0 0.6rem 0;">{{ $reports->first()['description'] }}</p>
+                            <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <span style="padding: 0.2rem 0.6rem; font-size: 0.7rem;">{{ $reports->first()['pamong_name'] }}</span>
+                                <span style="padding: 0.2rem 0.6rem; font-size: 0.7rem;">{{ $reports->first()['date'] }}</span>
+                                <span style="padding: 0.2rem 0.6rem; font-size: 0.7rem;">Disetujui</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Actual slides: all absolutely positioned, opacity crossfade --}}
                     @foreach($reports as $index => $report)
                         <div
-                            x-show="active === {{ $index }}"
-                            x-transition:enter="transition ease-in-out duration-500"
-                            x-transition:enter-start="opacity-0"
-                            x-transition:enter-end="opacity-100"
-                            x-transition:leave="transition ease-in-out duration-500"
-                            x-transition:leave-start="opacity-100"
-                            x-transition:leave-end="opacity-0"
-                            class="absolute inset-0 w-full h-full p-4 flex flex-col items-center justify-center text-center"
+                            :style="'position:absolute; top:0; left:0; width:100%; height:100%; transition:opacity 0.4s ease;' + (active === {{ $index }} ? 'opacity:1; z-index:2;' : 'opacity:0; z-index:1; pointer-events:none;')"
                         >
-                             {{-- Photo --}}
-                             <div class="w-full flex-1 flex items-center justify-center overflow-hidden rounded-lg bg-gray-100 mb-4 relative group">
+                            {{-- Photo --}}
+                            <div style="width: 100%; background: #f1f5f9; text-align: center; padding: 0.75rem;">
                                 <img
                                     src="{{ $report['photo_url'] }}"
                                     alt="{{ $report['title'] }}"
-                                    class="max-w-full max-h-[300px] object-contain shadow-sm rounded-md"
+                                    style="max-width: 100%; max-height: 340px; object-fit: contain; display: block; margin: 0 auto; border-radius: 0.375rem;"
                                     loading="lazy"
                                 >
                             </div>
 
                             {{-- Info --}}
-                            <div class="w-full">
-                                <h3 class="text-lg font-bold text-slate-800 mb-1">{{ $report['title'] }}</h3>
-                                <p class="text-sm text-slate-500 mb-3 line-clamp-2 max-w-2xl mx-auto">{{ $report['description'] }}</p>
-
-                                <div class="flex items-center justify-center gap-4 text-xs font-medium text-slate-600">
-                                    <div class="flex items-center gap-1.5 px-3 py-1 bg-white rounded-full border border-slate-200 shadow-sm">
-                                        <x-heroicon-o-user-circle class="w-4 h-4 text-primary-500" />
-                                        <span>{{ $report['pamong_name'] }}</span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5 px-3 py-1 bg-white rounded-full border border-slate-200 shadow-sm">
-                                        <x-heroicon-o-calendar-days class="w-4 h-4 text-amber-500" />
-                                        <span>{{ $report['date'] }}</span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 shadow-sm">
-                                        <x-heroicon-o-check-badge class="w-4 h-4" />
-                                        <span>Disetujui</span>
-                                    </div>
+                            <div style="padding: 0.875rem 1.25rem; text-align: center; background: white; border-top: 1px solid #e2e8f0;">
+                                <h3 style="font-size: 1rem; font-weight: 700; color: #1e293b; margin: 0 0 0.2rem 0;">{{ $report['title'] }}</h3>
+                                <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 0.6rem 0; line-height: 1.4;">{{ $report['description'] }}</p>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.6rem; background: #f8fafc; border-radius: 9999px; border: 1px solid #e2e8f0; font-size: 0.7rem; font-weight: 500; color: #475569;">
+                                        <x-heroicon-o-user-circle style="width: 0.875rem; height: 0.875rem; color: #3b82f6;" />
+                                        {{ $report['pamong_name'] }}
+                                    </span>
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.6rem; background: #f8fafc; border-radius: 9999px; border: 1px solid #e2e8f0; font-size: 0.7rem; font-weight: 500; color: #475569;">
+                                        <x-heroicon-o-calendar-days style="width: 0.875rem; height: 0.875rem; color: #f59e0b;" />
+                                        {{ $report['date'] }}
+                                    </span>
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.6rem; background: #ecfdf5; border-radius: 9999px; border: 1px solid #a7f3d0; font-size: 0.7rem; font-weight: 600; color: #047857;">
+                                        <x-heroicon-o-check-badge style="width: 0.875rem; height: 0.875rem;" />
+                                        Disetujui
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                {{-- Navigation Arrows --}}
+                {{-- Nav arrows --}}
                 @if($reports->count() > 1)
                     <button @click="prev(); stop(); start();"
-                            class="absolute top-1/2 left-2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-slate-700 shadow-md backdrop-blur-sm transition-transform hover:scale-110 focus:outline-none">
-                        <x-heroicon-o-chevron-left class="w-5 h-5" />
+                        style="position: absolute; top: 40%; left: -0.75rem; transform: translateY(-50%); z-index: 20; width: 2rem; height: 2rem; border-radius: 50%; background: white; border: 1px solid #e2e8f0; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center;"
+                        onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'; this.style.transform='translateY(-50%) scale(1.1)';"
+                        onmouseout="this.style.boxShadow='0 2px 6px rgba(0,0,0,0.1)'; this.style.transform='translateY(-50%) scale(1)';"
+                    >
+                        <x-heroicon-o-chevron-left style="width: 1rem; height: 1rem;" />
                     </button>
                     <button @click="next(); stop(); start();"
-                            class="absolute top-1/2 right-2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-slate-700 shadow-md backdrop-blur-sm transition-transform hover:scale-110 focus:outline-none">
-                        <x-heroicon-o-chevron-right class="w-5 h-5" />
+                        style="position: absolute; top: 40%; right: -0.75rem; transform: translateY(-50%); z-index: 20; width: 2rem; height: 2rem; border-radius: 50%; background: white; border: 1px solid #e2e8f0; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center;"
+                        onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'; this.style.transform='translateY(-50%) scale(1.1)';"
+                        onmouseout="this.style.boxShadow='0 2px 6px rgba(0,0,0,0.1)'; this.style.transform='translateY(-50%) scale(1)';"
+                    >
+                        <x-heroicon-o-chevron-right style="width: 1rem; height: 1rem;" />
                     </button>
                 @endif
 
-                {{-- Indicators --}}
+                {{-- Dots --}}
                 @if($reports->count() > 1)
-                    <div class="absolute top-4 right-4 z-10 flex space-x-1.5 bg-black/30 p-1.5 rounded-full backdrop-blur-sm">
+                    <div style="display: flex; justify-content: center; gap: 0.375rem; margin-top: 0.75rem;">
                         @foreach($reports as $index => $report)
                             <button
                                 @click="jump({{ $index }})"
-                                :class="active === {{ $index }} ? 'bg-white w-4' : 'bg-white/50 w-1.5 hover:bg-white/80'"
-                                class="h-1.5 rounded-full transition-all duration-300"
+                                :style="active === {{ $index }}
+                                    ? 'width: 1.25rem; height: 0.375rem; border-radius: 9999px; background: #3b82f6; border: none; cursor: pointer; transition: all 0.3s;'
+                                    : 'width: 0.375rem; height: 0.375rem; border-radius: 9999px; background: #cbd5e1; border: none; cursor: pointer; transition: all 0.3s;'"
                             ></button>
                         @endforeach
                     </div>
                 @endif
+
+                {{-- Counter --}}
+                <div style="position: absolute; top: 0.75rem; right: 0.75rem; z-index: 20; background: rgba(0,0,0,0.4); color: white; font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 9999px; backdrop-filter: blur(4px); font-weight: 500;">
+                    <span x-text="active + 1"></span> / {{ $reports->count() }}
+                </div>
             </div>
         @else
-            <div class="flex flex-col items-center justify-center py-12 text-slate-400 bg-slate-50 border border-slate-200 rounded-xl border-dashed">
-                <x-heroicon-o-photo class="w-12 h-12 mb-3 opacity-50" />
-                <p class="text-sm font-medium">Belum ada laporan disetujui</p>
+            <div style="text-align: center; padding: 3rem 0; color: #94a3b8;">
+                <x-heroicon-o-photo style="width: 3rem; height: 3rem; margin: 0 auto 0.75rem auto; opacity: 0.5;" />
+                <p style="font-size: 0.875rem; font-weight: 500;">Belum ada laporan disetujui</p>
             </div>
         @endif
     </x-filament::section>
