@@ -27,6 +27,20 @@ class AttendanceResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = \App\Models\Attendance::whereDate('date', today())
+            ->whereNotNull('clock_in')
+            ->whereNull('clock_out')
+            ->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'danger';
+    }
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
