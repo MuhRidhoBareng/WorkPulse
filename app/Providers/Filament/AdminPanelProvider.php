@@ -46,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
                 'danger' => Color::Rose,
             ])
             ->font('Figtree')
+            ->profile()
             ->sidebarCollapsibleOnDesktop()
             ->globalSearch(false)
             ->renderHook(

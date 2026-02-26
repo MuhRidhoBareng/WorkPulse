@@ -13,53 +13,59 @@
                     active: 0,
                     total: {{ $reports->count() }},
                     timer: null,
-                    init() { this.start(); },
-                    start() { this.timer = setInterval(() => this.next(), 5000); },
-                    stop() { clearInterval(this.timer); },
-                    next() { this.active = (this.active + 1) % this.total; },
-                    prev() { this.active = this.active === 0 ? this.total - 1 : this.active - 1; },
-                    jump(i) { this.active = i; this.stop(); this.start(); }
+                    init() { this.play(); },
+                    play() {
+                        this.stop();
+                        this.timer = setInterval(() => {
+                            this.active = (this.active + 1) % this.total;
+                        }, 5000);
+                    },
+                    stop() {
+                        if (this.timer) { clearInterval(this.timer); this.timer = null; }
+                    },
+                    goNext() {
+                        this.stop();
+                        this.active = (this.active + 1) % this.total;
+                        this.play();
+                    },
+                    goPrev() {
+                        this.stop();
+                        this.active = this.active === 0 ? this.total - 1 : this.active - 1;
+                        this.play();
+                    },
+                    goTo(i) {
+                        this.stop();
+                        this.active = i;
+                        this.play();
+                    }
                 }"
-                @mouseenter="stop()" @mouseleave="start()"
+                @mouseenter="stop()" @mouseleave="play()"
                 style="position: relative; width: 100%;"
             >
                 {{-- Slides container --}}
                 <div style="position: relative; width: 100%; border-radius: 0.75rem; border: 1px solid #e2e8f0; overflow: hidden; background: #f8fafc;">
-
-                    {{-- Invisible spacer: first slide rendered normally to define height --}}
-                    <div style="visibility: hidden;" aria-hidden="true">
-                        <div style="width: 100%; background: #f1f5f9; text-align: center; padding: 0.75rem;">
-                            <img src="{{ $reports->first()['photo_url'] }}" style="max-width: 100%; max-height: 340px; object-fit: contain; display: block; margin: 0 auto;" alt="">
-                        </div>
-                        <div style="padding: 0.875rem 1.25rem; text-align: center; background: white;">
-                            <h3 style="font-size: 1rem; font-weight: 700; margin: 0 0 0.2rem 0;">{{ $reports->first()['title'] }}</h3>
-                            <p style="font-size: 0.8rem; margin: 0 0 0.6rem 0;">{{ $reports->first()['description'] }}</p>
-                            <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <span style="padding: 0.2rem 0.6rem; font-size: 0.7rem;">{{ $reports->first()['pamong_name'] }}</span>
-                                <span style="padding: 0.2rem 0.6rem; font-size: 0.7rem;">{{ $reports->first()['date'] }}</span>
-                                <span style="padding: 0.2rem 0.6rem; font-size: 0.7rem;">Disetujui</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Actual slides: all absolutely positioned, opacity crossfade --}}
                     @foreach($reports as $index => $report)
                         <div
-                            :style="'position:absolute; top:0; left:0; width:100%; height:100%; transition:opacity 0.4s ease;' + (active === {{ $index }} ? 'opacity:1; z-index:2;' : 'opacity:0; z-index:1; pointer-events:none;')"
+                            x-show="active === {{ $index }}"
+                            x-cloak
+                            @if($index === 0)
+                                style="width: 100%;"
+                            @else
+                                style="position: absolute; top: 0; left: 0; width: 100%;"
+                            @endif
                         >
                             {{-- Photo --}}
                             <div style="width: 100%; background: #f1f5f9; text-align: center; padding: 0.75rem;">
                                 <img
                                     src="{{ $report['photo_url'] }}"
                                     alt="{{ $report['title'] }}"
-                                    style="max-width: 100%; max-height: 340px; object-fit: contain; display: block; margin: 0 auto; border-radius: 0.375rem;"
-                                    loading="lazy"
+                                    style="max-width: 100%; max-height: 400px; object-fit: contain; display: block; margin: 0 auto; border-radius: 0.375rem;"
                                 >
                             </div>
 
                             {{-- Info --}}
                             <div style="padding: 0.875rem 1.25rem; text-align: center; background: white; border-top: 1px solid #e2e8f0;">
-                                <h3 style="font-size: 1rem; font-weight: 700; color: #1e293b; margin: 0 0 0.2rem 0;">{{ $report['title'] }}</h3>
+                                <h3 style="font-size: 1rem; font-weight: 700; color: #1e293b; margin: 0 0 0.25rem 0;">{{ $report['title'] }}</h3>
                                 <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 0.6rem 0; line-height: 1.4;">{{ $report['description'] }}</p>
                                 <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
                                     <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.6rem; background: #f8fafc; border-radius: 9999px; border: 1px solid #e2e8f0; font-size: 0.7rem; font-weight: 500; color: #475569;">
@@ -82,17 +88,13 @@
 
                 {{-- Nav arrows --}}
                 @if($reports->count() > 1)
-                    <button @click="prev(); stop(); start();"
+                    <button @click="goPrev()"
                         style="position: absolute; top: 40%; left: -0.75rem; transform: translateY(-50%); z-index: 20; width: 2rem; height: 2rem; border-radius: 50%; background: white; border: 1px solid #e2e8f0; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center;"
-                        onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'; this.style.transform='translateY(-50%) scale(1.1)';"
-                        onmouseout="this.style.boxShadow='0 2px 6px rgba(0,0,0,0.1)'; this.style.transform='translateY(-50%) scale(1)';"
                     >
                         <x-heroicon-o-chevron-left style="width: 1rem; height: 1rem;" />
                     </button>
-                    <button @click="next(); stop(); start();"
+                    <button @click="goNext()"
                         style="position: absolute; top: 40%; right: -0.75rem; transform: translateY(-50%); z-index: 20; width: 2rem; height: 2rem; border-radius: 50%; background: white; border: 1px solid #e2e8f0; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center;"
-                        onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'; this.style.transform='translateY(-50%) scale(1.1)';"
-                        onmouseout="this.style.boxShadow='0 2px 6px rgba(0,0,0,0.1)'; this.style.transform='translateY(-50%) scale(1)';"
                     >
                         <x-heroicon-o-chevron-right style="width: 1rem; height: 1rem;" />
                     </button>
@@ -103,7 +105,7 @@
                     <div style="display: flex; justify-content: center; gap: 0.375rem; margin-top: 0.75rem;">
                         @foreach($reports as $index => $report)
                             <button
-                                @click="jump({{ $index }})"
+                                @click="goTo({{ $index }})"
                                 :style="active === {{ $index }}
                                     ? 'width: 1.25rem; height: 0.375rem; border-radius: 9999px; background: #3b82f6; border: none; cursor: pointer; transition: all 0.3s;'
                                     : 'width: 0.375rem; height: 0.375rem; border-radius: 9999px; background: #cbd5e1; border: none; cursor: pointer; transition: all 0.3s;'"
